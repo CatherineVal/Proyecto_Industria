@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+
+
+
+
+	 <!-- calendar view -->
+        <record model="ir.ui.view" id="session_calendar_view">
+            <field name="name">session.calendar</field>
+            <field name="model">openacademy.session</field>
+            <field name="arch" type="xml">
+                <calendar string="Session Calendar" date_start="start_date" date_stop="end_date" color="instructor_id">
+                    <field name="name"/>
+                </calendar>
+            </field>
+        </record>
         <!-- window action -->
         <!--
             The following tag is an action definition for a "window action",
@@ -10,7 +24,9 @@
             <field name="name">Courses</field>
             <field name="res_model">openacademy.course</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,calendar</field>
+ 	    <field name="context" eval="{'search_default_my_courses': 1}"/>
+           
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">Create the first course
                 </p>
@@ -39,6 +55,15 @@
                 <search>
                     <field name="name"/>
                     <field name="description"/>
+
+		     <filter name="my_courses" string="My Courses"
+                            domain="[('responsible_id', '=', uid)]"/>
+                    <group string="Group By">
+                        <filter name="by_responsible" string="Responsible"
+                                context="{'group_by': 'responsible_id'}"/>
+                    </group>
+
+
                 </search>
             </field>
         </record>
@@ -104,11 +129,14 @@
                                 <field name="course_id"/>
                                 <field name="name"/>
                                 <field name="instructor_id"/>
+	                	<field name="active"/>
                             </group>
                             <group string="Schedule">
                                 <field name="start_date"/>
                                 <field name="duration"/>
                                 <field name="seats"/>
+		                <field name="taken_seats" widget="progressbar"/>
+                          
                             </group>
 
 
@@ -137,20 +165,37 @@
                 <tree string="Session Tree">
                     <field name="name"/>
                     <field name="course_id"/>
+		  <field name="taken_seats" widget="progressbar"/>
                 </tree>
             </field>
         </record>	
+
+
+
+      <record model="ir.ui.view" id="session_gantt_view">
+            <field name="name">session.gantt</field>
+            <field name="model">openacademy.session</field>
+            <field name="arch" type="xml">
+                <gantt string="Session Gantt"
+                       date_start="start_date" date_delay="hours"
+                       default_group_by='instructor_id'>
+                    <!-- <field name="name"/> this is not required after Odoo 10.0 -->
+                </gantt>
+            </field>
+        </record>
+
 
 
         <record model="ir.actions.act_window" id="session_list_action">
             <field name="name">Sessions</field>
             <field name="res_model">openacademy.session</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+         <field name="view_mode">tree,form</field>
+
         </record>
 
         <menuitem id="session_menu" name="Sessions"
                   parent="openacademy_menu"
                   action="session_list_action"/>
-	
+
 </odoo>

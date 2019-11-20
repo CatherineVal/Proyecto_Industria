@@ -30,8 +30,7 @@
                   action="contact_list_action"/>
 
 
-	         parent="configuration_menu"
-                  action="contact_list_action"/>
+	
 
 	   <record model="ir.actions.act_window" id="contact_cat_list_action">
             <field name="name">Contact Tags</field>
